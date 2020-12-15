@@ -1,12 +1,17 @@
 package com.example.mylocker_ver1;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -26,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox lockSwitcher;
     private TextView switcherInfo;
     private SaveImage viewManager = null;
+    Button open_lock;
+    boolean isPush = false;
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -53,22 +60,67 @@ public class MainActivity extends AppCompatActivity {
         final SettingPresenter settingPresenter = new SettingPresenter(this);
         // 设置锁屏的界面
         setContentView(R.layout.activity_main);
-        // 服务开关的按钮
-        lockSwitcher = findViewById(R.id.lock_switcher);
-        lockSwitcher.setChecked(LockService.running);
-        // 下面的一行，显示是否开启服务
-        switcherInfo = findViewById(R.id.lock_switcher_info);
-        switcherInfo.setText(getResources().getString(R.string.current_lock_service_opening, LockService.running ? "开启" : "关闭"));
+//        // 服务开关的按钮
+//        lockSwitcher = findViewById(R.id.lock_switcher);
+//        lockSwitcher.setChecked(LockService.running);
+//        // 下面的一行，显示是否开启服务
+//        switcherInfo = findViewById(R.id.lock_switcher_info);
+//        switcherInfo.setText(getResources().getString(R.string.current_lock_service_opening, LockService.running ? "开启" : "关闭"));
         // 初始化启动
         settingPresenter.start();
-        // 根据服务开关的选项 -> 展示是否开启了服务, 根据是否开启服务，来决定跳转界面
-        lockSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//        // 根据服务开关的选项 -> 展示是否开启了服务, 根据是否开启服务，来决定跳转界面
+//        lockSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                // 更新当前的状态
+//                settingPresenter.setLockStatus(isChecked);
+//                switcherInfo.setText(getResources().getString(R.string.current_lock_service_opening,
+//                        isChecked ? "开启" : "关闭"));
+//            }
+//        });
+
+        open_lock = findViewById(R.id.bt_open_lock);
+        open_lock.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // 更新当前的状态
-                settingPresenter.setLockStatus(isChecked);
-                switcherInfo.setText(getResources().getString(R.string.current_lock_service_opening,
-                        isChecked ? "开启" : "关闭"));
+            public void onClick(View v) {
+//                RotateAnimation anim = new RotateAnimation(0.0f, 360.0f , Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f);
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.rotate);
+                anim.setInterpolator(new LinearInterpolator());
+                anim.setDuration(1000);
+                open_lock.setBackgroundResource(R.drawable.button_circle_changing);
+                open_lock.setEnabled(false);
+                open_lock.setText("");
+                open_lock.setAnimation(anim);
+                open_lock.startAnimation(anim);
+//                open_lock.clearAnimation();
+//                Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.rotate);
+//                open_lock.setAnimation(animation);
+//                animation.start();
+                isPush = !isPush;
+                anim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(isPush){
+                            open_lock.setText("已开启");
+                            open_lock.setEnabled(true);
+                            open_lock.setBackgroundResource(R.drawable.button_circle_open);
+                        }else{
+                            open_lock.setText("开启锁屏");
+                            open_lock.setEnabled(true);
+                            open_lock.setBackgroundResource(R.drawable.button_circle);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+                settingPresenter.setLockStatus(isPush);
             }
         });
 
@@ -76,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
         set_bg.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //里面写点击后想要实现的效果
                 Intent intent = new Intent(MainActivity.this, SaveImageActivity.class);
                 startActivity(intent);
 
