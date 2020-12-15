@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@drawable/mbackground"
+    android:background="@color/darkslateblue"
     >
 
     <LinearLayout
@@ -69,18 +69,21 @@
             android:textColor="#ffffff"
             android:textSize="20sp"
             android:layout_marginTop="100dp"
+            android:layout_gravity="center_horizontal"
             />
 
         <Button
             android:id="@+id/set_lock_bg"
-            android:layout_width="match_parent"
+            android:layout_width="200sp"
             android:layout_height="45dp"
             android:layout_marginTop="100dp"
-            android:background="@drawable/click_bg"
+            android:background="@drawable/block_content"
             android:shape="oval"
-            android:gravity="center_vertical"
             android:text="@string/set_lock_panel_bg"
-            android:textSize="@dimen/setting_ac_base_size"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"
+
             />
     </LinearLayout>
 </ScrollView>
