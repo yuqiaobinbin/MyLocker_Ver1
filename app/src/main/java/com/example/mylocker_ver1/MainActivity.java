@@ -1,5 +1,6 @@
 package com.example.mylocker_ver1;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mylocker_ver1.algorithm.SaveImage;
+import com.example.mylocker_ver1.SaveImageActivity;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox lockSwitcher;
     private TextView switcherInfo;
     private SaveImage viewManager = null;
+    private SaveImageActivity SaveCoord = null;
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @SuppressLint("SdCardPath")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }));
+        float[] DataCoord = new float[150];
     }
 
     @Override
