@@ -12,86 +12,57 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.opencv.imgproc.Imgproc.cvtColor;
-
+/**
+ * 均值、感知、差值哈希算法的调用与对比
+ */
 public class HashCompare {
-    public static int HashCompareFunc(Bitmap Bp1, Bitmap Bp2) {
 
-        //数据定义导入部分
+    /**
+     * 哈希算法函数
+     *
+     * @param bitmap1 图像1的Bitmap类型数据
+     * @param bitmap2 图像2的Bitmap类型数据
+     * @return 哈希对比的差异值
+     */
+    public static int HashCompareFunc(Bitmap bitmap1, Bitmap bitmap2){
         Mat src1 = new Mat();
         Mat dst1 = new Mat();
         Mat src2 = new Mat();
         Mat dst2 = new Mat();
 
-        //读取位图到MAT
-        Utils.bitmapToMat(Bp1, src1);
-        Utils.bitmapToMat(Bp2, src2);
+        //Bitmap转MAT(opencv处理的图像格式为MAT)
+        Utils.bitmapToMat(bitmap1, src1);
+        Utils.bitmapToMat(bitmap2, src2);
+
+        //opencv截取最大外接矩阵
         src1 = detectColoredBlob(src1);
         src2 = detectColoredBlob(src2);
 
-        if(src1==null || src2==null)return 100 ;
+        if(src1==null || src2==null)return -1; //图像为空即出错
 
-        //变ARGB变灰度图，四通道变一通道
-        cvtColor(src1, dst1, Imgproc.COLOR_BGR2GRAY);
-        cvtColor(src2, dst2, Imgproc.COLOR_BGR2GRAY);
+        //MAT转Bitmap
+        Bitmap dst_1 = null,dst_2 = null;
+        dst_1 = Bitmap.createBitmap(src1.cols(), src1.rows(), Bitmap.Config.ARGB_8888);
+        dst_2 = Bitmap.createBitmap(src2.cols(), src2.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(src1, dst_1);
+        Utils.matToBitmap(src2, dst_2);
 
+        //ahash对比
+        int AHashDifference = aHash.calculateByAHash(src1,src2);
+        Log.e("ahash ",AHashDifference+" ");
+//        return AHashDifference;
 
-        Bitmap dst1bmp = null,dst2bmp = null;
-        //Imgproc.cvtColor(seedsImage, tmp, Imgproc.COLOR_RGB2BGRA);
-        dst1bmp = Bitmap.createBitmap(dst1.cols(), dst1.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(dst1, dst1bmp);
-        dst2bmp = Bitmap.createBitmap(dst2.cols(), dst2.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(dst2, dst2bmp);
+        //phash对比
+        int PHashDifference = pHash.calculateByPHash(dst_1,dst_2);
+        Log.e("phash ",PHashDifference+" ");
+//        return PHashDifference;
 
-        AreaAveragingScale imgPre = new AreaAveragingScale(dst1bmp);
-        AreaAveragingScale img2Pre = new AreaAveragingScale(dst2bmp);
-        dst1bmp = imgPre.getScaledBitmap(8,8);
-        dst2bmp = img2Pre.getScaledBitmap(8,8);
-        Utils.bitmapToMat(dst1bmp, dst1);
-        Utils.bitmapToMat(dst2bmp, dst2);
-
-        //把灰度图图缩成8*8
-//        resize(dst1, dst1, new Size(8, 8), 0, 0, INTER_CUBIC);
-//        resize(dst2, dst2, new Size(8, 8), 0, 0, INTER_CUBIC);
-
-        //核心算法部分
-        //这里变成二维数组才可以用Mat.get(row,cul)去获取，二维是因为每个像素点里面可能有很多属性（ARGB）
-        // 变成灰度之后就只有一个G了，这个G是Gray，前面那个G是Green。
-        double[][] data1 = new double[64][1];
-        double[][] data2 = new double[64][1];
-        //iAvg 记录平均像素灰度值，arr记录像素灰度值，data是个跳板。
-        double iAvg1 = 0, iAvg2 = 0;
-        double[] arr1 = new double[64];
-        double[] arr2 = new double[64];
-        //get灰度给data，用data给arr充值，算平均灰度值iAvg。
-        for (int i = 0; i < 8; i++) {
-            int tmp = i * 8;
-            for (int j = 0; j < 8; j++) {
-                int tmp1 = tmp + j;
-                data1[tmp1] = dst1.get(i, j);
-                data2[tmp1] = dst2.get(i, j);
-                arr1[tmp1] = data1[tmp1][0];
-                arr2[tmp1] = data2[tmp1][0];
-                iAvg1 += arr1[tmp1];
-                iAvg2 += arr2[tmp1];
-
-            }
-        }
-        iAvg1 /= 64;
-        iAvg2 /= 64;
-        //比对每个像素灰度值和平均灰度值大小
-        for (int i = 0; i < 64; i++) {
-            arr1[i] = (arr1[i] >= iAvg1) ? 1 : 0;
-            arr2[i] = (arr2[i] >= iAvg2) ? 1 : 0;
-        }
-        //计算差异值
-        int iDiffNum = 0;
-        for (int i = 0; i < 64; i++)
-            if (arr1[i] != arr2[i])
-                ++iDiffNum;
-        Log.d("difference", String.valueOf(iDiffNum));
-        return iDiffNum;
+        //dhash对比
+        int DHashDifference = dHash.calculateByDHash(dst_1,dst_2);
+        Log.e("dhash ",DHashDifference+" ");
+        return DHashDifference;
     }
+
 
     private static Mat detectColoredBlob(Mat rgbaFrame) {
 
@@ -102,7 +73,6 @@ public class HashCompare {
         // 反转黑白
         Mat thresh = new Mat();
         Imgproc.threshold(hsvImage, thresh, 30, 255, Imgproc.THRESH_BINARY_INV);
-
 
         List<MatOfPoint> contours = new ArrayList<>();
         //contours参数为检测的轮廓数组，每一个轮廓用一个MatOfPoint类型的List表示
@@ -121,8 +91,6 @@ public class HashCompare {
         }
         Rect detectedBlobRoi = Imgproc.boundingRect(largestContour);
         Mat returnData = rgbaFrame.submat(detectedBlobRoi);
-//        HighGui.imshow("image",returnData); //显示
-//        HighGui.waitKey(0);
         return returnData;
     }
 }

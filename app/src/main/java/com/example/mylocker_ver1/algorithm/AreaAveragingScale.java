@@ -4,17 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 
 /**
- * 区域平均算法缩放图片，500x500的图，缩放成小图时；若使用安卓提供的api，无论怎么抗锯齿，缩放出的图片也是带有较明显锯齿的。此缩放效果提升
- *
- * @Author zhuanggy  欢迎加入安卓开发交流qq群 88130145
- * @Date:2014-12-5
- * @Copyright 原创：http://www.eoeandroid.com/thread-556407-1-1.html
+ * 区域平均算法缩放图片，提升缩放导致的锯齿效果
  */
 public class AreaAveragingScale {
     protected int[] colorArray;
     private int srcWidth;
     private int srcHeight;
-
     private int destWidth;
     private int destHeight;
 
@@ -42,6 +37,13 @@ public class AreaAveragingScale {
         }
     }
 
+    /**
+     * 仿写java.awt.Image包的getScaledInstance函数，实现图像缩放
+     *
+     * @param width 需要缩放的宽度
+     * @param height 需要缩放的高度
+     * @return 缩放后的图像
+     */
     public Bitmap getScaledBitmap(int width, int height) {
         destWidth = width;
         destHeight = height;
@@ -131,9 +133,6 @@ public class AreaAveragingScale {
     }
 
     private void calcRow(int dy, Bitmap bitmap) {
-
-        // Log.e("", "calcRow" + dy);
-
         float origmult = ((float) srcWidth) * srcHeight;
         for (int x = 0; x < srcWidth; x++) {
             float mult = origmult;

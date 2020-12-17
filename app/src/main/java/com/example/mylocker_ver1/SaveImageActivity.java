@@ -33,7 +33,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class SaveImageActivity extends Activity {
-    public static float[] DataCoord = new float[150];
+    public static float[] DataCoord = new float[500];
     private ImageView imageView;
     private Bitmap copyBitmap;
     private Paint paint;
@@ -46,8 +46,6 @@ public class SaveImageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_iamge);
-
-
 
         WindowManager wm = (WindowManager) this
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -106,8 +104,7 @@ public class SaveImageActivity extends Activity {
                         DataCoord[flag] = (float) (startX/0.7);
                         DataCoord[flag+1] = (float) (startY/0.7);
                         flag += 2;
-
-                        Log.e("滑动", x + "," + y);
+//                        Log.e("滑动", x + "," + y);
                         break;
                     case MotionEvent.ACTION_UP:
                         //抬起事件

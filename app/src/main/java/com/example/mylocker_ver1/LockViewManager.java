@@ -18,17 +18,19 @@ import android.widget.ImageView;
 import androidx.annotation.RequiresApi;
 
 import com.example.mylocker_ver1.algorithm.CoordCompare;
+import com.example.mylocker_ver1.algorithm.HashCompare;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LockViewManager {
     private volatile boolean isLock = false;
-    public static float[] Coord = new float[150];
+    public static float[] Coord = new float[500];
     public static LockViewManager manager = null;
     private Activity activity;
     private LockStatusListener lockStatusListener;
@@ -141,15 +143,14 @@ public class LockViewManager {
     }
 
     private void judgeUnLock(){
-//        int judgment = HashCompare.HashCompareFunc(copyBitmap,standardBitmap);
-//        for (int i = 0;i<flag;i++){
-//            Log.e("Coord " ,flag + " "+Coord[i] + " " + i);
-//        }
-        List<Float> setList = new ArrayList<>();
-        setList = CoordCompare.ApproximateTransform();
-        int judgment = CoordCompare.Calculate(Coord,setList);
+        int judgment = HashCompare.HashCompareFunc(copyBitmap,standardBitmap);
+
+//        List<Float> setList = new ArrayList<>();
+//        setList = CoordCompare.ApproximateTransform();
+//        int judgment = CoordCompare.Calculate(Coord,setList);
+
         Log.e("judgment",judgment+"");
-        if(judgment < 3000000) //lock解锁
+        if(judgment <= 15 && judgment != -1) //lock解锁 1：16  2：1000
             unLock();
         else {
 //            //加判断条件
@@ -159,18 +160,6 @@ public class LockViewManager {
         }
     }
     //保存图片
-    public void save(View view) {
-        //创建一个图片的文件
-        File file = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis() + ".png");
-        FileOutputStream straeam;
-        try {
-            straeam = new FileOutputStream(file);
-            //生成图片，参数①为图片的类型，参数②为图片质量，参数③为文件输出流
-            copyBitmap.compress(Bitmap.CompressFormat.PNG, 100, straeam);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void updateActivity(Activity activity_send) {
         activity = activity_send;

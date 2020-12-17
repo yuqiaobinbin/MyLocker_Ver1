@@ -7,7 +7,7 @@ public class SettingPresenter{
     private Activity activity;
     private Intent serviceIntent;
 
-    // init Intent
+    // Intent初始化
     public void start() {
         serviceIntent = new Intent(activity, LockService.class);
     }
@@ -17,7 +17,7 @@ public class SettingPresenter{
         this.activity = ac;
     }
 
-    //更新锁屏的状态
+    // 更新锁屏的状态
     public void setLockStatus(boolean isChecked) {
         if (isChecked && !LockService.running) {
             LockService.KILL = false;

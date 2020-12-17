@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }));
-        float[] DataCoord = new float[150];
+        float[] DataCoord = new float[500];
     }
 
     @Override
