@@ -1,10 +1,13 @@
 package com.example.mylocker_ver1.algorithm;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.Arrays;
 
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -68,18 +71,19 @@ public class aHash {
         Avg1 /= 64;
         Avg2 /= 64;
 
+
         //比对每个像素灰度值和平均灰度值大小
         for (int i = 0; i < 64; i++) {
             arr1[i] = (arr1[i] >= Avg1) ? 1 : 0;
             arr2[i] = (arr2[i] >= Avg2) ? 1 : 0;
         }
+//        Log.e("standard.jpg ", Arrays.toString(arr1)+"");
 
         //计算差异值
         int AHashdifferent = 0;
         for (int i = 0; i < 64; i++)
             if (arr1[i] != arr2[i])
                 ++AHashdifferent;
-//        Log.d("difference", String.valueOf(AHashdifferent));
         return AHashdifferent;
     }
 }

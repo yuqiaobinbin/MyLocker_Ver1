@@ -49,17 +49,15 @@ public class HashCompare {
 
         //ahash对比
         int AHashDifference = aHash.calculateByAHash(src1,src2);
-        Log.e("ahash ",AHashDifference+" ");
-//        return AHashDifference;
+        Log.e("ahash's difference",AHashDifference+" ");
 
         //phash对比
         int PHashDifference = pHash.calculateByPHash(dst_1,dst_2);
-        Log.e("phash ",PHashDifference+" ");
-//        return PHashDifference;
+        Log.e("phash's difference",PHashDifference+" ");
 
         //dhash对比
         int DHashDifference = dHash.calculateByDHash(dst_1,dst_2);
-        Log.e("dhash ",DHashDifference+" ");
+        Log.e("dhash's difference",DHashDifference+" ");
         return DHashDifference;
     }
 

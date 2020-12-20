@@ -155,20 +155,23 @@ public class SaveImageActivity extends Activity {
         return filePic.getAbsolutePath();
     }
 
+    /**
+     * FileChannel通道写入float数据
+     *
+     * @param verts float数组
+     * @param gcodeFile 文件名
+     * @param count 一次传输的大小
+     */
     public static void writeFloatToData(float[] verts, String gcodeFile, int count) {
         try {
             RandomAccessFile aFile = new RandomAccessFile(gcodeFile, "rw");
             FileChannel outChannel = aFile.getChannel();
-            //one float 4 bytes
-            //count 为数组大小
             ByteBuffer buf = ByteBuffer.allocate(4 * count * 3 * 3);
             buf.clear();
             buf.asFloatBuffer().put(verts);
-            //while(buf.hasRemaining())
             {
                 outChannel.write(buf);
             }
-            //outChannel.close();
             buf.rewind();
             outChannel.close();
         } catch (IOException ex) {
@@ -176,10 +179,16 @@ public class SaveImageActivity extends Activity {
         }
     }
 
+    /**
+     * FileChannel通道读出float数据
+     *
+     * @param gcodeFile 文件名
+     * @param Count 一次传输的大小
+     * @return float数组
+     */
     public static float[] readFloatFromData(String gcodeFile, int Count) {
         float[] verts = new float[Count * 3 * 3];
         try {
-//            Log.e("read:","success!");
             RandomAccessFile rFile = new RandomAccessFile(gcodeFile, "rw");
             FileChannel inChannel = rFile.getChannel();
             ByteBuffer buf_in = ByteBuffer.allocate(3 * 3 * Count * 4);
