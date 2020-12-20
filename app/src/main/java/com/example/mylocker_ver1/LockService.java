@@ -11,7 +11,9 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-// 锁屏开关的后台服务，主要是接受屏幕关闭的广播，以及服务被清除后自动重启服务
+/**
+ * 锁屏开关的后台服务，主要是接受屏幕关闭的广播，以及服务被清除后自动重启服务
+ */
 public class LockService extends Service {
     public static boolean running = false;
     public static boolean KILL = false;

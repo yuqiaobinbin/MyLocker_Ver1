@@ -12,13 +12,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.mylocker_ver1.LockViewManager;
 import com.example.mylocker_ver1.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
-
+/**
+ * 图像保存
+ */
 public class SaveImage {
     private volatile boolean isLock = false;
     private static View lockView;
@@ -88,6 +89,7 @@ public class SaveImage {
                         canvas.save();
                         canvas.restore();
 
+                        //文件路径
                         File file = new File("/res/drawable-v21/");
                         if(!file.exists())
                             file.mkdirs();

@@ -4,9 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
-
+/**
+ * 配置文件
+ */
 public class Config {
-
     public static final String SP_NAME ="LOCK";
     public static final String SP_BOOT_ON_ENABLE = "boot_on_enable";
     public static final String SP_LOCK_BG="lock_bg";

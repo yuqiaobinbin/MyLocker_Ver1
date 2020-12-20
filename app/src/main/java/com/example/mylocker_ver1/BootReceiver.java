@@ -5,8 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-
-// 接收开机广播,开启锁屏服务
+/**
+ * 接收开机广播,开启锁屏服务
+ */
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

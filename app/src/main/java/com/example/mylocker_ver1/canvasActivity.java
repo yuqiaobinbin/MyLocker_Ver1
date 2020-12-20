@@ -39,12 +39,10 @@ public class canvasActivity extends AppCompatActivity implements LockViewManager
         viewManager.setLockView(LayoutInflater.from(canvasActivity.this).inflate(R.layout.activity_canvas,null));
         viewManager.updateActivity(canvasActivity.this);
 
-
 //        getWindow().setDecorFitsSystemWindows(false);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
-
 
         setContentView(R.layout.activity_canvas);
 
@@ -65,7 +63,6 @@ public class canvasActivity extends AppCompatActivity implements LockViewManager
 
     @Override
     public void onLocked() {
-
     }
 
     @Override
@@ -73,7 +70,7 @@ public class canvasActivity extends AppCompatActivity implements LockViewManager
         finish();
     }
     private Bitmap HandleStandardBitMap() {
-        String absolutePath = "/data/data/com.example.mylocker_ver1/files";
+        @SuppressLint("SdCardPath") String absolutePath = "/data/data/com.example.mylocker_ver1/files";
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(absolutePath+"/standard1.png");

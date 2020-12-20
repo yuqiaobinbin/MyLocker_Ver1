@@ -28,21 +28,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 public class SaveImageActivity extends Activity {
+    public static float[] DataCoord = new float[500];
     private ImageView imageView;
     private Bitmap copyBitmap;
     private Paint paint;
     private Canvas canvas;
     private float startX;
     private float startY;
+    int flag = 0;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_iamge);
-
-
 
         WindowManager wm = (WindowManager) this
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -71,7 +74,7 @@ public class SaveImageActivity extends Activity {
 
         //图片的触摸事件
         imageView.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
+            @SuppressLint({"ClickableViewAccessibility", "SdCardPath"})
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 //获取动作的事件
@@ -81,6 +84,10 @@ public class SaveImageActivity extends Activity {
                         //按下事件
                         startX = event.getX();
                         startY = event.getY();
+
+                        DataCoord[flag+1] = (float) (startX/0.7);
+                        DataCoord[flag+2] = (float) (startY/0.7);
+                        flag = 3;
                         Log.e("按下", startX + "," + startY);
                         break;
                     case MotionEvent.ACTION_MOVE:
@@ -94,21 +101,31 @@ public class SaveImageActivity extends Activity {
 
                         startX = x;
                         startY = y;
-                        Log.e("滑动", x + "," + y);
+                        DataCoord[flag] = (float) (startX/0.7);
+                        DataCoord[flag+1] = (float) (startY/0.7);
+                        flag += 2;
+//                        Log.e("滑动", x + "," + y);
                         break;
                     case MotionEvent.ACTION_UP:
                         //抬起事件
                         float upX = event.getX();
                         float upY = event.getY();
+                        DataCoord[flag] = (float) (upX/0.7);
+                        DataCoord[flag+1] = (float) (upY/0.7);
+                        flag += 2;
+                        DataCoord[0]=flag;
+
                         Log.e("抬起", upX + "," + upY);
                         saveBitmap(getApplicationContext(),copyBitmap);
                         Toast.makeText(getApplicationContext(), "设置成功", Toast.LENGTH_SHORT).show();
                         finish();
                 }
                 //必须设置为true，否则只执行按下事件
+                writeFloatToData(DataCoord,"/data/data/com.example.mylocker_ver1/files/coorddata.txt",100);
                 return true;
             }
         });
+
     }
     public static String saveBitmap(Context context, Bitmap mBitmap) {
         String savePath;
@@ -136,5 +153,53 @@ public class SaveImageActivity extends Activity {
             return null;
         }
         return filePic.getAbsolutePath();
+    }
+
+    /**
+     * FileChannel通道写入float数据
+     *
+     * @param verts float数组
+     * @param gcodeFile 文件名
+     * @param count 一次传输的大小
+     */
+    public static void writeFloatToData(float[] verts, String gcodeFile, int count) {
+        try {
+            RandomAccessFile aFile = new RandomAccessFile(gcodeFile, "rw");
+            FileChannel outChannel = aFile.getChannel();
+            ByteBuffer buf = ByteBuffer.allocate(4 * count * 3 * 3);
+            buf.clear();
+            buf.asFloatBuffer().put(verts);
+            {
+                outChannel.write(buf);
+            }
+            buf.rewind();
+            outChannel.close();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    /**
+     * FileChannel通道读出float数据
+     *
+     * @param gcodeFile 文件名
+     * @param Count 一次传输的大小
+     * @return float数组
+     */
+    public static float[] readFloatFromData(String gcodeFile, int Count) {
+        float[] verts = new float[Count * 3 * 3];
+        try {
+            RandomAccessFile rFile = new RandomAccessFile(gcodeFile, "rw");
+            FileChannel inChannel = rFile.getChannel();
+            ByteBuffer buf_in = ByteBuffer.allocate(3 * 3 * Count * 4);
+            buf_in.clear();
+            inChannel.read(buf_in);
+            buf_in.rewind();
+            buf_in.asFloatBuffer().get(verts);
+            inChannel.close();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return verts;
     }
 }

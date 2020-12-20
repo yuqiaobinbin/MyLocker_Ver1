@@ -4,4 +4,7 @@
 4    android:versionCode="4200"
 5    android:versionName="4.2.0" >
 6
-7</manifest>
+7    <uses-sdk android:minSdkVersion="1" />
+7-->E:\git_clone\MyLocker_Ver1\lib_opencv\src\main\AndroidManifest.xml
+8
+9</manifest>
