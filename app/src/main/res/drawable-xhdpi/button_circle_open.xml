@@ -10,4 +10,7 @@
     android:shape="oval">
     <solid android:color="#6699ff" />
     <size android:height="12dp" android:width="12dp"/>
+    <stroke android:color="#58ACFA"
+        android:width="10dp">
+    </stroke>
 </shape>
