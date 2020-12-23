@@ -17,7 +17,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.RequiresApi;
 
-import com.example.mylocker_ver1.algorithm.CoordCompare;
 import com.example.mylocker_ver1.algorithm.HashCompare;
 
 import java.io.File;
@@ -30,7 +29,6 @@ import java.util.List;
 
 public class LockViewManager {
     private volatile boolean isLock = false;
-    public static float[] Coord = new float[500];
     public static LockViewManager manager = null;
     private Activity activity;
     private LockStatusListener lockStatusListener;
@@ -46,7 +44,6 @@ public class LockViewManager {
     private float startY;
     public int screenWidth;
     public int screenHeight;
-    int flag = 0;
     public LockViewManager(Activity activity) {
         this.activity = activity;
         isLock = false;
@@ -101,19 +98,12 @@ public class LockViewManager {
                         //按下事件
                         startX = event.getX();
                         startY = event.getY();
-                        Coord[flag+1] = startX;
-                        Coord[flag+2] = startY;
-                        flag = 3;
                         Log.e("按下", startX + "," + startY);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         //滑动事件
                         float x = event.getX();
                         float y = event.getY();
-                        Coord[flag] = x;
-                        Coord[flag+1] = y;
-                        flag+=2;
-
                         //在画布上画直线，不能画点，滑动事件获得的坐标不是连续的
                         canvas.drawLine(startX, startY, x, y, paint);
                         //更新图片
@@ -125,10 +115,6 @@ public class LockViewManager {
                         //抬起事件
                         float upX = event.getX();
                         float upY = event.getY();
-                        Coord[flag] = upX;
-                        Coord[flag+1] = upY;
-                        flag += 2;
-                        Coord[0]=flag;
                         judgeUnLock();
 //                        unLock();
                         break;

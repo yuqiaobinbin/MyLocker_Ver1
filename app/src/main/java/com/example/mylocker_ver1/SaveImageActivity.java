@@ -33,14 +33,15 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class SaveImageActivity extends Activity {
-    public static float[] DataCoord = new float[500];
     private ImageView imageView;
     private Bitmap copyBitmap;
     private Paint paint;
     private Canvas canvas;
     private float startX;
     private float startY;
-    int flag = 0;
+
+    
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +86,6 @@ public class SaveImageActivity extends Activity {
                         startX = event.getX();
                         startY = event.getY();
 
-                        DataCoord[flag+1] = (float) (startX/0.7);
-                        DataCoord[flag+2] = (float) (startY/0.7);
-                        flag = 3;
                         Log.e("按下", startX + "," + startY);
                         break;
                     case MotionEvent.ACTION_MOVE:
@@ -101,19 +99,11 @@ public class SaveImageActivity extends Activity {
 
                         startX = x;
                         startY = y;
-                        DataCoord[flag] = (float) (startX/0.7);
-                        DataCoord[flag+1] = (float) (startY/0.7);
-                        flag += 2;
-//                        Log.e("滑动", x + "," + y);
                         break;
                     case MotionEvent.ACTION_UP:
                         //抬起事件
                         float upX = event.getX();
                         float upY = event.getY();
-                        DataCoord[flag] = (float) (upX/0.7);
-                        DataCoord[flag+1] = (float) (upY/0.7);
-                        flag += 2;
-                        DataCoord[0]=flag;
 
                         Log.e("抬起", upX + "," + upY);
                         saveBitmap(getApplicationContext(),copyBitmap);
@@ -121,7 +111,6 @@ public class SaveImageActivity extends Activity {
                         finish();
                 }
                 //必须设置为true，否则只执行按下事件
-                writeFloatToData(DataCoord,"/data/data/com.example.mylocker_ver1/files/coorddata.txt",100);
                 return true;
             }
         });
